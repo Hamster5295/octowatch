@@ -17,6 +17,7 @@ path = "src/lib.rs"
 [dependencies]
 anyhow = ">=1.0.98"
 kovi = ">=0.12.4"
+kovi-onebot = "0.13.2"
 octocrab = ">= 0.44.1"
 openai = ">=1.1.1"
 serde = { version = ">=1.0.219", features = ["derive"] }

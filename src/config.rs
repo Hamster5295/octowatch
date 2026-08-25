@@ -10,7 +10,7 @@ use serde::Deserialize;
 
 pub(crate) static CONFIG: OnceLock<Config> = OnceLock::new();
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub(crate) struct RepoConfig {
     pub(crate) groups: Vec<i64>,
     pub(crate) time: String,

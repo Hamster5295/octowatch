@@ -3,12 +3,9 @@ mod config;
 use std::{collections::HashMap, sync::Arc};
 
 use kovi::{
-    PluginBuilder as plugin, RuntimeBot,
-    bot::{message::Segment, runtimebot::kovi_api::SetAccessControlList},
-    chrono::{Duration, Utc},
-    log::{info, warn},
-    serde_json::json,
+    PluginBuilder as plugin, RuntimeBot, Segment, bot::runtimebot::kovi_api::SetAccessControlList, chrono::{Duration, Utc}, event::id::ID, log::{info, warn}, serde_json::json,
 };
+use kovi_onebot::*;
 use octocrab::Octocrab;
 use openai::chat::{ChatCompletion, ChatCompletionMessage, ChatCompletionMessageRole};
 
@@ -29,8 +26,9 @@ async fn main() {
             config
                 .repos
                 .iter()
-                .flat_map(|r| &r.groups)
-                .copied()
+                .cloned()
+                .flat_map(|r| r.groups)
+                .map(|i| ID::new(i))
                 .collect(),
         ),
     )
