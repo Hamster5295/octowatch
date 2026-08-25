@@ -3,6 +3,7 @@ mod consts;
 
 use std::{collections::HashMap, sync::Arc};
 
+use anyhow::Context;
 use kovi::{
     PluginBuilder as plugin, RuntimeBot, Segment,
     bot::runtimebot::kovi_api::SetAccessControlList,
@@ -20,7 +21,10 @@ use consts::*;
 #[kovi::plugin]
 async fn main() {
     let bot = plugin::get_runtime_bot();
-    let config = config::init(bot.get_data_path()).await.unwrap();
+    let config = config::init(bot.get_data_path())
+        .await
+        .with_context(|| format!("[{PLUGIN_HEAD}] Error when parsing config"))
+        .unwrap();
 
     bot.set_plugin_access_control(PLUGIN_NAME, true).unwrap();
     bot.set_plugin_access_control_list(
