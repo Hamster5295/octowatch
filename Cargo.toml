@@ -2,7 +2,7 @@
 name = "kovi-plugin-octowatch"
 description = "基于 Kovi 框架的 Github 仓库进度总结插件"
 authors = ["Hamster5295 <hamster5295@163.com>"]
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
 keywords = ["kovi", "plugin", "github"]
 license = "MIT"
@@ -16,7 +16,7 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = ">=1.0.98"
-kovi = ">=0.12.4"
+kovi = ">=0.13.5"
 kovi-onebot = "0.13.2"
 octocrab = ">= 0.44.1"
 openai = ">=1.1.1"
