@@ -1,19 +1,20 @@
 use std::{path::PathBuf, sync::OnceLock};
 
-use anyhow::Result;
+use crate::consts::*;
+use anyhow::{Result, anyhow};
 use kovi::{
+    event::id::ID,
     log::{info, warn},
     tokio::fs,
 };
 use openai::Credentials;
 use serde::Deserialize;
-use crate::consts::*;
 
 pub(crate) static CONFIG: OnceLock<Config> = OnceLock::new();
 
 #[derive(Deserialize, Clone)]
 pub(crate) struct RepoConfig {
-    pub(crate) groups: Vec<i64>,
+    pub(crate) groups: Vec<ID>,
     pub(crate) time: String,
     pub(crate) interval: u32,
     pub(crate) owner: String,
@@ -61,8 +62,16 @@ pub(crate) async fn init(path: PathBuf) -> Result<&'static Config> {
         }
     };
 
-    // .with_context(|| format!("Failed to read config file at {}", config_path.display()))?;
     let config: ConfigFile = toml::from_str(&config_txt)?;
+
+    for repo in &config.repos {
+        for group in &repo.groups {
+            if let None = group.try_as_i64() {
+                return Err(anyhow!("Invalid group id: '{group}' should be an i64!"));
+            }
+        }
+    }
+
     Ok(CONFIG.get_or_init(|| Config {
         github_token: config.github_token,
         llm: LLMConfig {

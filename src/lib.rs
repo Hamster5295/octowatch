@@ -7,7 +7,6 @@ use kovi::{
     PluginBuilder as plugin, RuntimeBot, Segment,
     bot::runtimebot::kovi_api::SetAccessControlList,
     chrono::{Duration, Utc},
-    event::id::ID,
     log::{info, warn},
     serde_json::json,
 };
@@ -33,7 +32,6 @@ async fn main() {
                 .iter()
                 .cloned()
                 .flat_map(|r| r.groups)
-                .map(|i| ID::new(i))
                 .collect(),
         ),
     )
@@ -272,6 +270,6 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
     }
 
     for g in &repo.groups {
-        bot.send_group_msg(g.to_owned(), msgs.clone());
+        bot.send_group_msg(g.try_as_i64_or_panic(), msgs.clone());
     }
 }
