@@ -1,17 +1,22 @@
 mod config;
+mod consts;
 
 use std::{collections::HashMap, sync::Arc};
 
 use kovi::{
-    PluginBuilder as plugin, RuntimeBot, Segment, bot::runtimebot::kovi_api::SetAccessControlList, chrono::{Duration, Utc}, event::id::ID, log::{info, warn}, serde_json::json,
+    PluginBuilder as plugin, RuntimeBot, Segment,
+    bot::runtimebot::kovi_api::SetAccessControlList,
+    chrono::{Duration, Utc},
+    event::id::ID,
+    log::{info, warn},
+    serde_json::json,
 };
 use kovi_onebot::*;
 use octocrab::Octocrab;
 use openai::chat::{ChatCompletion, ChatCompletionMessage, ChatCompletionMessageRole};
 
-use crate::config::RepoConfig;
-
-const PLUGIN_NAME: &str = "kovi-plugin-octowatch";
+use config::RepoConfig;
+use consts::*;
 
 #[kovi::plugin]
 async fn main() {
@@ -49,7 +54,7 @@ async fn main() {
         .unwrap();
     }
 
-    info!("[octowatch] Ready to watch some github repos!")
+    info!("[{PLUGIN_HEAD}] Ready to watch some github repos!")
 }
 
 struct Contribution {
@@ -69,7 +74,7 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
         .await;
 
     if let Err(e) = commits {
-        warn!("[octowatch] Failed to fetch commits: {e}");
+        warn!("[{PLUGIN_HEAD}] Failed to fetch commits: {e}");
         return;
     }
 
@@ -77,7 +82,7 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
     let cnt = commits.items.len();
 
     info!(
-        "[octowatch] Retrived {} commit(s) from {}/{}",
+        "[{PLUGIN_HEAD}] Retrived {} commit(s) from {}/{}",
         cnt, repo.owner, repo.repo
     );
 
@@ -87,7 +92,7 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
             Some(c) => c,
             None => {
                 info!(
-                    "[octowatch] Commit {} has no author, skipped",
+                    "[{PLUGIN_HEAD}] Commit {} has no author, skipped",
                     &commit.sha[0..6]
                 );
                 continue;
@@ -128,7 +133,7 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
     }
 
     info!(
-        "[octowatch] {} user has contributed, gathered.",
+        "[{PLUGIN_HEAD}] {} user has contributed, gathered.",
         conts.len()
     );
 
@@ -173,14 +178,14 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
         .await;
 
     if let Err(e) = cmpl {
-        warn!("[octowatch] Failed to create LLM completion: {e}");
+        warn!("[{PLUGIN_HEAD}] Failed to create LLM completion: {e}");
         return;
     }
 
     let cmpl = cmpl.unwrap().choices[0].message.content.clone();
 
     if cmpl.is_none() {
-        warn!("[octowatch] No content returned from LLM");
+        warn!("[{PLUGIN_HEAD}] No content returned from LLM");
         return;
     }
 
@@ -228,7 +233,7 @@ async fn handle_repo_check(repo: &RepoConfig, bot: Arc<RuntimeBot>, gh: Arc<Octo
 
             match qq.parse::<u32>().ok() {
                 Some(qq) => {
-                    info!("[octowatch] Extracted QQ: {}", qq);
+                    info!("[{PLUGIN_HEAD}] Extracted QQ: {}", qq);
 
                     Segment::new(
                         "at",

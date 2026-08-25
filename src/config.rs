@@ -7,6 +7,7 @@ use kovi::{
 };
 use openai::Credentials;
 use serde::Deserialize;
+use crate::consts::*;
 
 pub(crate) static CONFIG: OnceLock<Config> = OnceLock::new();
 
@@ -49,13 +50,13 @@ pub(crate) struct Config {
 }
 
 pub(crate) async fn init(path: PathBuf) -> Result<&'static Config> {
-    let config_path = path.join("config.toml");
+    let config_path = path.join(CONFIG_FILE);
 
     let config_txt = match fs::read_to_string(&config_path).await {
         Ok(txt) => txt,
         Err(e) => {
-            warn!("[octowatch] Failed to read config file: {e}");
-            info!("[octowatch] Using default config");
+            warn!("[{PLUGIN_HEAD}] Failed to read config file: {e}");
+            info!("[{PLUGIN_HEAD}] Using default config");
             String::new()
         }
     };
