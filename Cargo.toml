@@ -2,7 +2,7 @@
 name = "kovi-plugin-octowatch"
 description = "基于 Kovi 框架的 Github 仓库进度总结插件"
 authors = ["Hamster5295 <hamster5295@163.com>"]
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 keywords = ["kovi", "plugin", "github"]
 license = "MIT"
